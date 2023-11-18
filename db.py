@@ -17,7 +17,7 @@ class Note:
     date_on_wrong: bool
 
 
-def create_devices_table(path_to_db):
+def create_notes_table(path_to_db):
     try:
         sqlite_connection = sqlite3.connect(
             path_to_db
@@ -92,16 +92,13 @@ def save_voice_command_to_db(
         if sqlite_connection:
             sqlite_connection.close()
 
-
-
-
-def delete_device_data(path_to_db, buffer_text):
+def delete_voice_bufer_data(path_to_db, buffer_text):
     try:
         sqlite_connection = sqlite3.connect(
             path_to_db
         )
         del_device = (
-            'DELETE from voice_buffer '
+            'DELETE from notes_buffer '
             f'WHERE buffer_text = "{str(buffer_text)}"'
         )
         cursor = sqlite_connection.cursor()
