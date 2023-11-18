@@ -105,6 +105,8 @@ poetry.lock
 /tmp_notes
 /test_notes
 /tmp_screenshots
+/tmp_pages
+/phantomjs-2.1.1-linux-x86_64
 *.db
 *.zip
 # Models folders

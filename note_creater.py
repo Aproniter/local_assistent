@@ -5,7 +5,8 @@ from schemas import NoteBuffer
 
 
 class NoteCreater:
-    def __init__(self, notes_path, data: NoteBuffer) -> None:
+    def __init__(self, notes_path, data: NoteBuffer, page: bool = False) -> None:
+        self.page = page
         self.notes_path = notes_path
         self.data = data
         self.note_body = self.__notes_generator(data.header, data.tags)
@@ -27,7 +28,10 @@ class NoteCreater:
             if phrase in commands.create_paragraph:
                 self.data.all_data[self.data.all_data.index(phrase) - 1] += '\n\n'
                 self.data.all_data.pop(self.data.all_data.index(phrase))
-        body = '. '.join((phrase.capitalize() for phrase in self.data.all_data)).replace('\n\n. ', '\n\n') + '.'
+        phrases = (phrase for phrase in self.data.all_data)
+        if not self.page:
+            phrases = tuple(map(str.capitalize, phrases))
+        body = '. '.join(phrases).replace('\n\n. ', '\n\n') + '.'
         note_string = ''
         if header:
             note_string += f'# {header.upper()}\n\n'

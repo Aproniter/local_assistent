@@ -5,3 +5,5 @@ screenshots_path = 'tmp_screenshots'
 my_brauser_link_regions = ((270,45,1330,85),(2200,380,2900,420))
 scale_percent = 2500
 screens_dataset_path = 'tmp_screenshots/to_dataset'
+pages_folder = '/home/apron/code/vosk/tmp_pages'
+download_page_tags = ['Скачанные страницы']

@@ -20,3 +20,9 @@ class NoteBuffer:
     all_data: list[str]
     tags: list[str] | None
     date: str | None # %Y-%m-%d
+
+
+@dataclass
+class PageToNote:
+    name: str
+    folder: str
