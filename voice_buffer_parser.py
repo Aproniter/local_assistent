@@ -20,8 +20,7 @@ class VoiceBufferParser:
 
     def save_internet_page(self):
         note_date = datetime.now().strftime('%y-%m-%d')
-        screen_parser = ScreenParser()
-        note_body, note_name, note_tags = screen_parser.run()
+        links, corrected_links = ScreenParser().run()
 
     def note_creater(self) -> str:
         note_date = None
@@ -43,8 +42,7 @@ class VoiceBufferParser:
                 tags = self.data[tags_start + 1:]
                 self.data = self.data[:tags_start]
                 break
-        creater = NoteCreater(self.notes_path, NoteBuffer(note_header, self.data, tags, note_date))
-        note_body, note_name = creater.run()
+        note_body, note_name = NoteCreater(self.notes_path, NoteBuffer(note_header, self.data, tags, note_date)).run()
         
         db.save_voice_command_to_db(self.db_path, note_header, self.data, tags, note_date, note_body, note_name)
         return note_name
