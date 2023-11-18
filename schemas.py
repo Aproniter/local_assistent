@@ -16,7 +16,7 @@ class Note:
 
 @dataclass
 class NoteBuffer:
-    header: str
+    header: str | None
     all_data: list[str]
-    tags: list[str]
-    date: str # %Y-%m-%d
+    tags: list[str] | None
+    date: str | None # %Y-%m-%d

@@ -4,6 +4,8 @@ from datetime import datetime
 import random
 
 from voice_buffer_parser import VoiceBufferParser
+from note_creater import NoteCreater
+from schemas import NoteBuffer
 # from logger import logger as log
 import commands
 import db
@@ -20,6 +22,22 @@ def voice_buffer_parser():
     signal = 'note_creater'
     data = ['command 1', 'command 2', 'command 3']
     return VoiceBufferParser(signal, data, 'test_notes', 'test_db_path.db')
+
+@pytest.fixture
+def note_creater():
+    data = ['command 1', 'command 2', 'command 3']
+    buffer = NoteBuffer(header=None, all_data=data, tags=None, date=None)
+    return NoteCreater('test_notes', buffer)
+
+
+def test_notes_generator(note_creater):
+    header = 'Test_Header'
+    tags = ['tag1', 'tag2', 'tag3']
+
+    note_body = note_creater._NoteCreater__notes_generator(header, tags)
+
+    expected_body = '# TEST_HEADER\n\nCommand 1. Command 2. Command 3.\n\n[[tag1]] [[tag2]] [[tag3]]'
+    assert note_body == expected_body
 
 def test_note_creater(voice_buffer_parser):
     note_name = voice_buffer_parser.note_creater()
