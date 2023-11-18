@@ -80,7 +80,7 @@ def parse_command(data):
             voice_buffer.append(data)
 
 if __name__ == '__main__':
-    db.create_devices_table(config.db_path)
+    db.create_notes_table(config.db_path)
     try:
         if args.samplerate is None:
             device_info = sd.query_devices(args.device, "input")

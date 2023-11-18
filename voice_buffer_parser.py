@@ -4,6 +4,7 @@ from datetime import datetime
 import commands
 import db
 from note_creater import NoteCreater
+from screen_parser import ScreenParser
 from schemas import NoteBuffer
 # from logger import logger as log
 
@@ -18,7 +19,9 @@ class VoiceBufferParser:
         self.thread.start()
 
     def save_internet_page(self):
-        pass
+        note_date = datetime.now().strftime('%y-%m-%d')
+        screen_parser = ScreenParser()
+        note_body, note_name, note_tags = screen_parser.run()
 
     def note_creater(self) -> str:
         note_date = None
