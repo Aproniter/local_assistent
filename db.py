@@ -1,20 +1,6 @@
 import sqlite3
-from dataclasses import dataclass
 
 from logger import logger as log
-
-
-@dataclass
-class Note:
-    id: int
-    file_name: str
-    note_header: str
-    buffer_text: str
-    tags: str
-    date_on: str
-    final_text: str
-    tags_wrong: bool
-    date_on_wrong: bool
 
 
 def create_notes_table(path_to_db):

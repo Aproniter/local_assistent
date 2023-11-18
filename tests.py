@@ -7,9 +7,10 @@ from voice_buffer_parser import VoiceBufferParser
 # from logger import logger as log
 import commands
 import db
+import schemas
 
 
-db.create_devices_table('test_db_path.db')
+db.create_notes_table('test_db_path.db')
 for i in os.listdir('test_notes'):
     os.remove(f'test_notes/{i}')
 
@@ -31,16 +32,6 @@ def test_note_creater(voice_buffer_parser):
         note_content = file.read()
         assert 'Command 1. Command 2. Command 3.\n\n' in note_content
 
-def test_notes_generator(voice_buffer_parser):
-    header = 'Test_Header'
-    tags = ['tag1', 'tag2', 'tag3']
-    voice_buffer_parser.data = ['command 1', 'command 2', 'command 3']
-
-    note_body = voice_buffer_parser._VoiceBufferParser__notes_generator(header, tags)
-
-    expected_body = '# TEST_HEADER\n\nCommand 1. Command 2. Command 3.\n\n[[tag1]] [[tag2]] [[tag3]]'
-    assert note_body == expected_body
-
 def test_note_creater_with_date(voice_buffer_parser):
     daily_phrase = commands.daily_note[random.randint(0,len(commands.daily_note) - 1)]
     voice_buffer_parser.data.extend([daily_phrase])
@@ -57,7 +48,7 @@ def test_note_creater_with_header(voice_buffer_parser):
     note = db.get_note_by_final_text_or_header('test_db_path.db', 'Test_Header')
     assert note is not None
 
-    db_note = db.Note(*note[-1])
+    db_note = schemas.Note(*note[-1])
     assert db_note.file_name == 'Test_Header'
 
     assert os.path.exists(f'{voice_buffer_parser.notes_path}/Test_Header.md')

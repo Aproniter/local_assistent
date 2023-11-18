@@ -1,9 +1,10 @@
-import os
 import threading
 from datetime import datetime
 
 import commands
 import db
+from note_creater import NoteCreater
+from schemas import NoteBuffer
 # from logger import logger as log
 
 
@@ -39,30 +40,8 @@ class VoiceBufferParser:
                 tags = self.data[tags_start + 1:]
                 self.data = self.data[:tags_start]
                 break
-        note_body = self.__notes_generator(note_header, tags)
-        noname_notes_count = len([i for i in os.listdir(self.notes_path) if 'new_note_' in i])
-        if note_date is not None:
-            note_name = note_date
-        elif note_date is None and note_header is not None:
-            note_name = note_header
-        else:
-            note_name = f'new_note_{noname_notes_count + 1}'
-        with open(f'{self.notes_path}/{note_name}.md', 'w') as new_file:
-            new_file.write(note_body)
+        creater = NoteCreater(self.notes_path, NoteBuffer(note_header, self.data, tags, note_date))
+        note_body, note_name = creater.run()
+        
         db.save_voice_command_to_db(self.db_path, note_header, self.data, tags, note_date, note_body, note_name)
         return note_name
-
-    def __notes_generator(self, header, tags):
-        for phrase in self.data:
-            if phrase in commands.create_paragraph:
-                self.data[self.data.index(phrase) - 1] += '\n\n'
-                self.data.pop(self.data.index(phrase))
-        body = '. '.join((phrase.capitalize() for phrase in self.data)).replace('\n\n. ', '\n\n') + '.'
-        note_string = ''
-        if header:
-            note_string += f'# {header.upper()}\n\n'
-        note_string += f'{body}\n\n'
-        if tags:
-            tags = ' '.join((f'[[{tag}]]' for tag in tags))
-            note_string += tags
-        return note_string

@@ -14,24 +14,6 @@ import config
 from voice_buffer_parser import VoiceBufferParser
 from logger import logger as log
 
-# import pyttsx3
-
-# tts = pyttsx3.init()
-# voices = tts.getProperty('voices')
-
-# for voice in voices:
-
-#     print('=======')
-
-#     print('Имя: %s' % voice.name)
-
-#     print('ID: %s' % voice.id)
-
-#     print('Язык(и): %s' % voice.languages)
-
-#     print('Пол: %s' % voice.gender)
-
-#     print('Возраст: %s' % voice.age)
 
 q = queue.Queue()
 
@@ -89,6 +71,9 @@ def parse_command(data):
         command_flag = 0
         VoiceBufferParser('note_creater', voice_buffer, config.notes_path, config.db_path)
         voice_buffer = []
+    elif data in commands.save_page:
+        playsound(f'{config.sounds_path}/understand.mp3')
+        VoiceBufferParser('save_internet_page', voice_buffer, config.notes_path, config.db_path)
     else:
         if command_flag:
             playsound(f'{config.sounds_path}/understand.mp3')
@@ -100,11 +85,7 @@ if __name__ == '__main__':
         if args.samplerate is None:
             device_info = sd.query_devices(args.device, "input")
             args.samplerate = int(device_info["default_samplerate"])
-            
-        # if args.model is None:
-        #     model = Model(lang="en-us")
-        # else:
-        #     model = Model(lang=args.model)
+
         model = Model(r"vosk-model-small-ru-0.22")
         # model = Model(r"vosk-model-ru-0.22") # ноут не тянет
         # model = Model(r"vosk-model-ru-0.42") # ноут не тянет
@@ -131,9 +112,7 @@ if __name__ == '__main__':
                         buffer.append(result['text'])
                         print(result['text'])
                         parse_command(result['text'])
-                        
-                # else:
-                #     print(rec.PartialResult())
+
                 if dump_fn is not None:
                     dump_fn.write(data)
 

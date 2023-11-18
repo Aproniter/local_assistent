@@ -104,6 +104,7 @@ poetry.lock
 /logs
 /tmp_notes
 /test_notes
+/tmp_screenshots
 *.db
 *.zip
 # Models folders
