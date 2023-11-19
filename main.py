@@ -64,19 +64,22 @@ voice_buffer = []
 def parse_command(data):
     global command_flag, voice_buffer
     if data in commands.create_note:
-        playsound(f'{config.sounds_path}/record_start.mp3')
+        playsound(f'{config.sounds_path}/record_start.mp3', False)
         command_flag = 1
     elif data in commands.close_note:
-        playsound(f'{config.sounds_path}/understand.mp3')
+        playsound(f'{config.sounds_path}/understand.mp3', False)
         command_flag = 0
         VoiceBufferParser('note_creater', voice_buffer, config.notes_path, config.db_path)
         voice_buffer = []
     elif data in commands.save_page:
-        playsound(f'{config.sounds_path}/understand.mp3')
+        playsound(f'{config.sounds_path}/understand.mp3', False)
         VoiceBufferParser('save_internet_page', voice_buffer, config.notes_path, config.db_path)
+    elif data in commands.stop_script:
+        playsound(f'{config.sounds_path}/exit.mp3',)
+        raise KeyboardInterrupt
     else:
         if command_flag:
-            playsound(f'{config.sounds_path}/understand.mp3')
+            playsound(f'{config.sounds_path}/understand.mp3', False)
             voice_buffer.append(data)
 
 if __name__ == '__main__':
@@ -98,7 +101,7 @@ if __name__ == '__main__':
         with sd.RawInputStream(samplerate=args.samplerate, blocksize = 8000, device=args.device,
                 dtype="int16", channels=1, callback=callback):
             log.info("Press Ctrl+C to stop the recording")
-
+            playsound(f'{config.sounds_path}/on.mp3', False)
             rec = KaldiRecognizer(model, args.samplerate)
             while True:
                 data = q.get()

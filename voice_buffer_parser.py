@@ -30,10 +30,10 @@ class VoiceBufferParser:
         tags = config.download_page_tags
         for page in pages:
             all_data = [page.folder, commands.create_paragraph[0], f'[[{page.link_to_obsidian}]]', commands.create_paragraph[0], *links, commands.create_paragraph[0], note_date]
-            NoteCreater(NoteBuffer(page.name, all_data, tags), self.notes_path, True).run()
+            NoteCreater(NoteBuffer(page.name, all_data, tags), self.notes_path).run()
             self._edit_or_create_linked_note(note_date.split(' ')[0], page.name)
             self._edit_or_create_linked_note(config.download_page_tags[0], page.name)
-        playsound(f'{config.sounds_path}/understand.mp3')
+        playsound(f'{config.sounds_path}/understand.mp3', False)
 
     def note_creater(self) -> str:
         note_header = None

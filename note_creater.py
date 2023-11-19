@@ -44,7 +44,7 @@ class NoteCreater:
 
     def _get_note_name(self):
         if self.data.name is not None:
-            return self.data.name 
+            return self.data.name .capitalize()
         else:
             return f'new_note_{self.noname_notes_count + 1}'
     

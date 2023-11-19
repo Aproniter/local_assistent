@@ -109,6 +109,9 @@ poetry.lock
 /phantomjs-2.1.1-linux-x86_64
 *.db
 *.zip
+voice_assistent.service
+nohup.out
+start.sh
 # Models folders
 /vosk-model-ru-0.22
 /vosk-model-ru-0.42
