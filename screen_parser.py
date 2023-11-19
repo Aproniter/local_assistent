@@ -2,6 +2,7 @@ import pytesseract
 import cv2
 import numpy
 from PIL import ImageGrab
+from playsound import playsound
 
 import config
 
@@ -14,6 +15,7 @@ class ScreenParser:
 
     def run(self):
         self._get_screenshots()
+        playsound(f'{config.sounds_path}/screenshot.mp3')
         self._find_links()
         self._get_corrected_links()
         return self.links, self.corrected_links

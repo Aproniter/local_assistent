@@ -10,6 +10,7 @@ from schemas import NoteBuffer
 import commands
 import db
 import schemas
+import config
 
 
 db.create_notes_table('test_db_path.db')
@@ -85,5 +86,5 @@ def test_note_creater_with_tags(voice_buffer_parser):
 
 def test_create_linked_date_note(voice_buffer_parser):
     voice_buffer_parser.note_creater()
-    current_date = datetime.now().strftime('%y-%m-%d')
+    current_date = datetime.now().strftime(config.date_format)
     assert os.path.exists(f'{voice_buffer_parser.notes_path}/{current_date}.md')

@@ -4,6 +4,7 @@ import requests
 
 import config
 from schemas import PageToNote
+# from logger import logger as log
 
 
 class PageLoader:
@@ -34,10 +35,19 @@ class PageLoader:
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-        return PageToNote(title, new_folder)
+        t = self.__get_obsidian_path(new_folder)
+        return PageToNote(title, new_folder, t)
 
     def __get__list_links(self):
         return self.links if self.links == self.cor_links else [*self.links, *self.cor_links]
+    
+    def __get_obsidian_path(self, new_folder):
+        for root, dirs, files in os.walk(new_folder):
+            for file in files:
+                if file == 'index.html':
+                    tmp = os.path.join(root, file)
+                    tmp = config.obsidian_prefix + tmp[tmp.find(config.obsidian_prefix)+len(config.obsidian_prefix):]
+                    return tmp
 
 
 if __name__ == '__main__':

@@ -44,4 +44,4 @@ class NoteCreater:
             return f'new_note_{self.noname_notes_count + 1}'
     
     # def _add_daylistamp(self):
-    #     self.data.tags.append(datetime.now().strftime('%y-%m-%d'))
+    #     self.data.tags.append(datetime.now().strftime(config.date_format))

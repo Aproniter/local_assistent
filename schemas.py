@@ -25,3 +25,4 @@ class NoteBuffer:
 class PageToNote:
     name: str
     folder: str
+    link_to_obsidian: str

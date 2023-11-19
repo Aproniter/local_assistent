@@ -1,6 +1,7 @@
 import os
 import threading
 from datetime import datetime
+from playsound import playsound
 
 import commands
 import config
@@ -9,13 +10,13 @@ from note_creater import NoteCreater
 from page_loader import PageLoader
 from screen_parser import ScreenParser
 from schemas import NoteBuffer
-from logger import logger as log
+# from logger import logger as log
 
 
 class VoiceBufferParser:
     def __init__(self, signal, data, notes_path, db_path) -> None:
         self.notes_path = notes_path
-        self.note_date = datetime.now().strftime('%y-%m-%d')
+        self.note_date = datetime.now().strftime(config.date_format)
         self.db_path = db_path
         self.worker = self.__getattribute__(signal)
         self.data: list[str] = data
@@ -23,16 +24,16 @@ class VoiceBufferParser:
         self.thread.start()
 
     def save_internet_page(self):
-        note_date = datetime.now().strftime('%y-%m-%d %H:%M:%S')
+        note_date = datetime.now().strftime(config.datetime_format)
         links, corrected_links = ScreenParser().run()
         pages = PageLoader(links, corrected_links).run()
         tags = config.download_page_tags
         for page in pages:
-            log.info(page.folder)
-            all_data = [page.folder, commands.create_paragraph[0], *links, commands.create_paragraph[0], note_date]
+            all_data = [page.folder, commands.create_paragraph[0], f'[[{page.link_to_obsidian}]]', commands.create_paragraph[0], *links, commands.create_paragraph[0], note_date]
             NoteCreater(NoteBuffer(page.name, all_data, tags), self.notes_path, True).run()
             self._edit_or_create_linked_note(note_date.split(' ')[0], page.name)
             self._edit_or_create_linked_note(config.download_page_tags[0], page.name)
+        playsound(f'{config.sounds_path}/understand.mp3')
 
     def note_creater(self) -> str:
         note_header = None
@@ -62,8 +63,11 @@ class VoiceBufferParser:
                 self.notes_path
             ).run()
         else:
-            with open(f'{self.notes_path}/{main_note_header}.md', 'a') as dayli_file:
-                dayli_file.write(f'\n\n[[{note_name}]]')
+            with open(f'{self.notes_path}/{main_note_header}.md', 'r+') as dayli_file:
+                note_content = dayli_file.read()
+                if f'\n\n[[{note_name}]]' not in note_content:
+                    dayli_file.seek(0,2)
+                    dayli_file.write(f'\n\n[[{note_name}]]')
 
 
 if __name__ == '__main__':

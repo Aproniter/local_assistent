@@ -1,9 +1,14 @@
 db_path = 'voice_buffer.db'
-notes_path = 'tmp_notes'
+notes_path = '/home/apron/my_notes'
+# notes_path = '/home/apron/code/vosk/tmp_notes'
 sounds_path = 'sounds'
 screenshots_path = 'tmp_screenshots'
 my_brauser_link_regions = ((270,45,1330,85),(2200,380,2900,420))
 scale_percent = 2500
 screens_dataset_path = 'tmp_screenshots/to_dataset'
-pages_folder = '/home/apron/code/vosk/tmp_pages'
+pages_folder = '/home/apron/my_notes/files/pages'
+# pages_folder = '/home/apron/code/vosk/tmp_pages'
 download_page_tags = ['Скачанные страницы']
+datetime_format = '%Y-%m-%d %H:%M:%S'
+date_format = '%Y-%m-%d'
+obsidian_prefix = 'files/pages'
