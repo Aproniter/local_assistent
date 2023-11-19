@@ -16,7 +16,7 @@ class Note:
 
 @dataclass
 class NoteBuffer:
-    header: str | None
+    name: str | None
     all_data: list[str]
     tags: list[str]
 

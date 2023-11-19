@@ -27,17 +27,16 @@ def voice_buffer_parser():
 @pytest.fixture
 def note_creater():
     data = ['command 1', 'command 2', 'command 3']
-    buffer = NoteBuffer(header=None, all_data=data, tags=[])
+    buffer = NoteBuffer(name=None, all_data=data, tags=[])
     return NoteCreater(buffer, 'test_notes')
 
 
 def test_notes_generator(note_creater):
-    header = 'Test_Header'
     tags = ['tag1', 'tag2', 'tag3']
 
-    note_body = note_creater._NoteCreater__notes_generator(header, tags)
+    note_body = note_creater._NoteCreater__notes_generator(tags)
 
-    expected_body = '# TEST_HEADER\n\nCommand 1. Command 2. Command 3.\n\n[[tag1]] [[tag2]] [[tag3]]'
+    expected_body = 'Command 1. Command 2. Command 3.\n\n[[tag1]] [[tag2]] [[tag3]]'
     assert note_body == expected_body
 
 def test_note_creater(voice_buffer_parser):
@@ -52,21 +51,32 @@ def test_note_creater(voice_buffer_parser):
         assert 'Command 1. Command 2. Command 3.\n\n' in note_content
 
 
-def test_note_creater_with_header(voice_buffer_parser):
-    header_phrase = commands.notes_header[random.randint(0,len(commands.notes_header) - 1)]
-    voice_buffer_parser.data.extend([header_phrase, 'Test_Header'])
+def test_note_create_with_name(voice_buffer_parser):
+    name_phrase = commands.notes_names[random.randint(0,len(commands.notes_names) - 1)]
+    voice_buffer_parser.data.extend([name_phrase, 'Test_Name'])
     voice_buffer_parser.note_creater()
 
-    note = db.get_note_by_final_text_or_header('test_db_path.db', 'Test_Header')
+    note = db.get_note_by_final_text_or_header('test_db_path.db', 'Test_Name')
     assert note is not None
 
     db_note = schemas.Note(*note[-1])
-    assert db_note.file_name == 'Test_Header'
+    assert db_note.file_name == 'Test_Name'
 
-    assert os.path.exists(f'{voice_buffer_parser.notes_path}/Test_Header.md')
+    assert os.path.exists(f'{voice_buffer_parser.notes_path}/Test_Name.md')
 
+def test_note_create_with_headers(voice_buffer_parser):
+    header_phrase = commands.notes_headers[random.randint(0,len(commands.notes_headers) - 1)]
+    for header in ('First header', 'Second Header'):
+        voice_buffer_parser.data.extend([header_phrase, header])
+        voice_buffer_parser.data.append(header.split()[0])
+    note_name = voice_buffer_parser.note_creater()
+    with open(f'{voice_buffer_parser.notes_path}/{note_name}.md', 'r') as file:
+        note_content = file.read()
+        assert '## First header.\n\n' in note_content
+        assert '## Second header.\n\n' in note_content
+    
 def test_note_creater_with_tags(voice_buffer_parser):
-    header_phrase = commands.notes_header[random.randint(0,len(commands.notes_header) - 1)]
+    header_phrase = commands.notes_names[random.randint(0,len(commands.notes_names) - 1)]
     note_name = 'Test_tags'
     voice_buffer_parser.data.extend([header_phrase, note_name])
     tags_phrase = commands.tags[random.randint(0,len(commands.tags) - 1)]

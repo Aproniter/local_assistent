@@ -40,7 +40,7 @@ class VoiceBufferParser:
         tags = []
         tags_start = None
         for phrase in self.data:
-            if phrase in commands.notes_header:
+            if phrase in commands.notes_names:
                 note_header = self.data.pop(self.data.index(phrase) + 1)
                 self.data.pop(self.data.index(phrase))
         for tag in commands.tags:
