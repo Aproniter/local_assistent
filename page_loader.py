@@ -5,6 +5,7 @@ import requests
 import config
 from schemas import PageToNote
 
+
 class PageLoader:
     def __init__(self, links, corrected_links) -> None:
         self.links = links
@@ -21,19 +22,19 @@ class PageLoader:
 
     def _save_page(self, link):
         r = requests.get(link).text
-        title = r[r.find('<title>')+len('<title>'):r.find('</title>')]
-        before_pages_list = set(os.listdir(config.pages_folder))
+        title = r[r.find('<title>')+len('<title>'):r.find('</title>')].replace(' ', '_').replace('/','_')
+        new_folder = f'{config.pages_folder}/{title}'
+        if title not in os.listdir(config.pages_folder):
+            os.mkdir(new_folder)
         command = f'wget -kpE -e robots=off {link}'
         subprocess.call(
             command,
             shell=True,
-            cwd=config.pages_folder,
+            cwd=new_folder,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         )
-        new_folder = tuple(i for i in os.listdir(config.pages_folder) if i not in before_pages_list)
-        page_folder = new_folder[0] if len(new_folder) > 0 else ''
-        return PageToNote(title.replace(' ', '_').replace('/','_'), page_folder)
+        return PageToNote(title, new_folder)
 
     def __get__list_links(self):
         return self.links if self.links == self.cor_links else [*self.links, *self.cor_links]

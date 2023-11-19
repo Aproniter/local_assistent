@@ -26,8 +26,8 @@ def voice_buffer_parser():
 @pytest.fixture
 def note_creater():
     data = ['command 1', 'command 2', 'command 3']
-    buffer = NoteBuffer(header=None, all_data=data, tags=None, date=None)
-    return NoteCreater('test_notes', buffer)
+    buffer = NoteBuffer(header=None, all_data=data, tags=[])
+    return NoteCreater(buffer, 'test_notes')
 
 
 def test_notes_generator(note_creater):
@@ -50,13 +50,6 @@ def test_note_creater(voice_buffer_parser):
         note_content = file.read()
         assert 'Command 1. Command 2. Command 3.\n\n' in note_content
 
-def test_note_creater_with_date(voice_buffer_parser):
-    daily_phrase = commands.daily_note[random.randint(0,len(commands.daily_note) - 1)]
-    voice_buffer_parser.data.extend([daily_phrase])
-    voice_buffer_parser.note_creater()
-    
-    current_date = datetime.now().strftime('%y-%m-%d')
-    assert os.path.exists(f'{voice_buffer_parser.notes_path}/{current_date}.md')
 
 def test_note_creater_with_header(voice_buffer_parser):
     header_phrase = commands.notes_header[random.randint(0,len(commands.notes_header) - 1)]
@@ -81,3 +74,8 @@ def test_note_creater_with_tags(voice_buffer_parser):
     with open(f'{voice_buffer_parser.notes_path}/Test_tags.md', 'r') as file:
         note_content = file.read()
         assert '[[tag1]] [[tag2]] [[tag3]]' in note_content
+
+def test_create_linked_date_note(voice_buffer_parser):
+    voice_buffer_parser.note_creater()
+    current_date = datetime.now().strftime('%y-%m-%d')
+    assert os.path.exists(f'{voice_buffer_parser.notes_path}/{current_date}.md')
