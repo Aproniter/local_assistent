@@ -30,7 +30,9 @@ class VoiceBufferParser:
         for page in pages:
             log.info(page.folder)
             all_data = [page.folder, commands.create_paragraph[0], *links, commands.create_paragraph[0], note_date]
-            NoteCreater(NoteBuffer(page.name, all_data, tags, None), self.notes_path, True).run()
+            NoteCreater(NoteBuffer(page.name, all_data, tags), self.notes_path, True).run()
+            self._edit_or_create_linked_note(note_date.split(' ')[0], page.name)
+            self._edit_or_create_linked_note(config.download_page_tags[0], page.name)
 
     def note_creater(self) -> str:
         note_header = None
@@ -48,20 +50,21 @@ class VoiceBufferParser:
                 break
         tags.append(self.note_date)
         note_body, note_name = NoteCreater(NoteBuffer(note_header, self.data, tags), self.notes_path).run()
-        self._edit_or_create_daily_note(note_name)
+        for tag in tags:
+            self._edit_or_create_linked_note(tag, note_name)
         db.save_voice_command_to_db(self.db_path, note_header, self.data, tags, self.note_date, note_body, note_name)
         return note_name
     
-    def _edit_or_create_daily_note(self, note_name):
-        if f'{self.note_date}.md' not in os.listdir(self.notes_path):
+    def _edit_or_create_linked_note(self, main_note_header, note_name):
+        if f'{main_note_header}.md' not in os.listdir(self.notes_path):
             NoteCreater(
-                NoteBuffer(self.note_date, [], [note_name]),
+                NoteBuffer(main_note_header, [], [note_name]),
                 self.notes_path
             ).run()
         else:
-            with open(f'{self.notes_path}/{self.note_date}.md', 'a') as dayli_file:
+            with open(f'{self.notes_path}/{main_note_header}.md', 'a') as dayli_file:
                 dayli_file.write(f'\n\n[[{note_name}]]')
 
 
 if __name__ == '__main__':
-    v = VoiceBufferParser('note_creater', ['test'], config.notes_path, config.db_path)
+    v = VoiceBufferParser('save_internet_page', ['test'], config.notes_path, config.db_path)

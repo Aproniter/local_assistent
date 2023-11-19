@@ -66,14 +66,22 @@ def test_note_creater_with_header(voice_buffer_parser):
 
 def test_note_creater_with_tags(voice_buffer_parser):
     header_phrase = commands.notes_header[random.randint(0,len(commands.notes_header) - 1)]
-    voice_buffer_parser.data.extend([header_phrase, 'Test_tags'])
+    note_name = 'Test_tags'
+    voice_buffer_parser.data.extend([header_phrase, note_name])
     tags_phrase = commands.tags[random.randint(0,len(commands.tags) - 1)]
-    voice_buffer_parser.data.extend([tags_phrase, 'tag1', 'tag2', 'tag3'])
+    tags = ['tag1', 'tag2', 'tag3']
+    voice_buffer_parser.data.extend([tags_phrase, *tags])
     voice_buffer_parser.note_creater()
     
-    with open(f'{voice_buffer_parser.notes_path}/Test_tags.md', 'r') as file:
+    with open(f'{voice_buffer_parser.notes_path}/{note_name}.md', 'r') as file:
         note_content = file.read()
         assert '[[tag1]] [[tag2]] [[tag3]]' in note_content
+
+    for tag in tags:
+        assert os.path.exists(f'{voice_buffer_parser.notes_path}/{tag}.md')
+        with open(f'{voice_buffer_parser.notes_path}/{tag}.md', 'r') as file:
+            note_content = file.read()
+            assert f'[[{note_name}]]' in note_content
 
 def test_create_linked_date_note(voice_buffer_parser):
     voice_buffer_parser.note_creater()
