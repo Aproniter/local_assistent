@@ -112,6 +112,7 @@ poetry.lock
 voice_assistent.service
 nohup.out
 start.sh
+.env
 # Models folders
 /vosk-model-ru-0.22
 /vosk-model-ru-0.42

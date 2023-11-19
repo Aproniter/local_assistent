@@ -1,10 +1,9 @@
+import os
 import pytesseract
 import cv2
 import numpy
 from PIL import ImageGrab
 from playsound import playsound
-
-import config
 
 
 class ScreenParser:
@@ -15,7 +14,7 @@ class ScreenParser:
 
     def run(self):
         self._get_screenshots()
-        playsound(f'{config.sounds_path}/screenshot.mp3')
+        playsound(f'{os.getenv("sounds_path")}/screenshot.mp3')
         self._find_links()
         self._get_corrected_links()
         return self.links, self.corrected_links
@@ -34,12 +33,12 @@ class ScreenParser:
                 self._save_to_dataset(img, string)
 
     def _get_screenshots(self):
-        for key, screen_number in enumerate(config.my_brauser_link_regions):
+        for key, screen_number in enumerate(os.getenv('my_brauser_link_regions')):
             screenshot = ImageGrab.grab(bbox=screen_number)
             image = cv2.cvtColor(numpy.array(screenshot), cv2.COLOR_RGB2BGR)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            width = int(gray.shape[1] * config.scale_percent / 100)
-            height = int(gray.shape[0] * config.scale_percent / 100)
+            width = int(gray.shape[1] * os.getenv('scale_percent') / 100)
+            height = int(gray.shape[0] * os.getenv('scale_percent') / 100)
             dim = (width, height)
             resize = cv2.resize(gray, dim, interpolation= cv2.INTER_LINEAR)
             self.screens.append(resize)
@@ -52,7 +51,7 @@ class ScreenParser:
 
     def _save_to_dataset(self, img, name):
         name = name.replace(':',f'%{hex(ord(":"))}').replace('/',f'%{hex(ord("/"))}').replace('\n','')
-        cv2.imwrite(f'{config.screens_dataset_path}/{name}.jpg', img)
+        cv2.imwrite(f'{os.getenv("screens_dataset_path")}/{name}.jpg', img)
 
 
 

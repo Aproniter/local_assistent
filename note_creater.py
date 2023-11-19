@@ -1,13 +1,12 @@
 import os
 
 import commands
-import config
 from schemas import NoteBuffer
 # from logger import logger as log
 
 
 class NoteCreater:
-    def __init__(self, data: NoteBuffer, notes_path = config.notes_path) -> None:
+    def __init__(self, data: NoteBuffer, notes_path = os.getenv('notes_path')) -> None:
         self.notes_path = notes_path
         self.data = data
         self.noname_notes_count = len([i for i in os.listdir(self.notes_path) if 'new_note_' in i])
@@ -49,4 +48,4 @@ class NoteCreater:
             return f'new_note_{self.noname_notes_count + 1}'
     
     # def _add_daylistamp(self):
-    #     self.data.tags.append(datetime.now().strftime(config.date_format))
+    #     self.data.tags.append(datetime.now().strftime(os.getenv('date_format')))

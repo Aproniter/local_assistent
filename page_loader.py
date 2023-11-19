@@ -2,7 +2,6 @@ import os
 import subprocess
 import requests
 
-import config
 from schemas import PageToNote
 # from logger import logger as log
 
@@ -24,8 +23,8 @@ class PageLoader:
     def _save_page(self, link):
         r = requests.get(link).text
         title = r[r.find('<title>')+len('<title>'):r.find('</title>')].replace(' ', '_').replace('/','_')
-        new_folder = f'{config.pages_folder}/{title}'
-        if title not in os.listdir(config.pages_folder):
+        new_folder = f'{os.getenv("pages_folder")}/{title}'
+        if title not in os.listdir(os.getenv("pages_folder")):
             os.mkdir(new_folder)
         command = f'wget -kpE -e robots=off {link}'
         subprocess.call(
@@ -46,7 +45,7 @@ class PageLoader:
             for file in files:
                 if file == 'index.html':
                     tmp = os.path.join(root, file)
-                    tmp = config.obsidian_prefix + tmp[tmp.find(config.obsidian_prefix)+len(config.obsidian_prefix):]
+                    tmp = os.getenv('obsidian_prefix') + tmp[tmp.find(os.getenv('obsidian_prefix'))+len(os.getenv('obsidian_prefix')):]
                     return tmp
 
 

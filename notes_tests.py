@@ -2,6 +2,7 @@ import pytest
 import os
 from datetime import datetime
 import random
+from dotenv import load_dotenv
 
 from voice_buffer_parser import VoiceBufferParser
 from note_creater import NoteCreater
@@ -10,7 +11,9 @@ from schemas import NoteBuffer
 import commands
 import db
 import schemas
-import config
+
+
+load_dotenv()
 
 
 db.create_notes_table('test_db_path.db')
@@ -96,5 +99,5 @@ def test_note_creater_with_tags(voice_buffer_parser):
 
 def test_create_linked_date_note(voice_buffer_parser):
     voice_buffer_parser.note_creater()
-    current_date = datetime.now().strftime(config.date_format)
+    current_date = datetime.now().strftime(os.getenv('date_format'))
     assert os.path.exists(f'{voice_buffer_parser.notes_path}/{current_date}.md')

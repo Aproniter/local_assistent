@@ -4,7 +4,6 @@ from datetime import datetime
 from playsound import playsound
 
 import commands
-import config
 import db
 from note_creater import NoteCreater
 from page_loader import PageLoader
@@ -16,7 +15,7 @@ from schemas import NoteBuffer
 class VoiceBufferParser:
     def __init__(self, signal, data, notes_path, db_path) -> None:
         self.notes_path = notes_path
-        self.note_date = datetime.now().strftime(config.date_format)
+        self.note_date = datetime.now().strftime(os.getenv('date_format'))
         self.db_path = db_path
         self.worker = self.__getattribute__(signal)
         self.data: list[str] = data
@@ -24,16 +23,16 @@ class VoiceBufferParser:
         self.thread.start()
 
     def save_internet_page(self):
-        note_date = datetime.now().strftime(config.datetime_format)
+        note_date = datetime.now().strftime(os.getenv('datetime_format'))
         links, corrected_links = ScreenParser().run()
         pages = PageLoader(links, corrected_links).run()
-        tags = config.download_page_tags
+        tags = os.getenv('download_page_tags')
         for page in pages:
             all_data = [page.folder, commands.create_paragraph[0], f'[[{page.link_to_obsidian}]]', commands.create_paragraph[0], *links, commands.create_paragraph[0], note_date]
             NoteCreater(NoteBuffer(page.name, all_data, tags), self.notes_path).run()
             self._edit_or_create_linked_note(note_date.split(' ')[0], page.name)
-            self._edit_or_create_linked_note(config.download_page_tags[0], page.name)
-        playsound(f'{config.sounds_path}/understand.mp3', False)
+            self._edit_or_create_linked_note(os.getenv('download_page_tags')[0], page.name)
+        playsound(f'{os.getenv("sounds_path")}/understand.mp3', False)
 
     def note_creater(self) -> str:
         note_header = None
@@ -71,4 +70,4 @@ class VoiceBufferParser:
 
 
 if __name__ == '__main__':
-    v = VoiceBufferParser('save_internet_page', ['test'], config.notes_path, config.db_path)
+    v = VoiceBufferParser('save_internet_page', ['test'], os.getenv('notes_path'), os.getenv('db_path'))
