@@ -69,10 +69,17 @@ def parse_command(data):
         playsound(f'{os.getenv("sounds_path")}/record_start.mp3', False)
         command_flag = 1
     elif data in commands.close_note:
-        playsound(f'{os.getenv("sounds_path")}/understand.mp3', False)
-        command_flag = 0
-        VoiceBufferParser('note_creater', voice_buffer, os.getenv('notes_path'), os.getenv('db_path'))
-        voice_buffer = []
+        if command_flag:
+            playsound(f'{os.getenv("sounds_path")}/understand.mp3', False)
+            command_flag = 0
+            VoiceBufferParser('note_creater', voice_buffer, os.getenv('notes_path'), os.getenv('db_path'))
+            voice_buffer = []
+    elif data in commands.to_report:
+        if command_flag:
+            playsound(f'{os.getenv("sounds_path")}/understand.mp3', False)
+            command_flag = 0
+            VoiceBufferParser('adding_report', voice_buffer, os.getenv('notes_path'), os.getenv('db_path'))
+            voice_buffer = []
     elif data in commands.save_page:
         playsound(f'{os.getenv("sounds_path")}/understand.mp3', False)
         VoiceBufferParser('save_internet_page', voice_buffer, os.getenv('notes_path'), os.getenv('db_path'))

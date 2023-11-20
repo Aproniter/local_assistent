@@ -1,6 +1,6 @@
 import os
 import threading
-from datetime import datetime
+from datetime import datetime, timedelta
 from playsound import playsound
 
 import commands
@@ -54,7 +54,27 @@ class VoiceBufferParser:
             self._edit_or_create_linked_note(tag, note_name)
         db.save_voice_command_to_db(self.db_path, note_header, self.data, tags, self.note_date, note_body, note_name)
         return note_name
-    
+
+    def adding_report(self):
+        week_dates = self.__get_dates_of_current_week()
+        note_name = f'{os.getenv("report_header")} с {week_dates[0]} по {week_dates[6]}'
+        note_body = [f'- {i}\n' for i in self.data]
+        if f'{note_name}.md' not in os.listdir(self.notes_path):
+            note_body = [f'{commands.notes_headers[0]}', self.note_date, *note_body]
+            NoteCreater(
+                NoteBuffer(note_name, note_body, []),
+                self.notes_path
+            ).run()
+        else:
+            with open(f'{self.notes_path}/{note_name}.md', 'r+') as dayli_file:
+                note_content = dayli_file.read()
+                if (header :=  f'## {self.note_date}.\n\n') not in note_content:
+                    dayli_file.seek(0,2)
+                    dayli_file.write(header)
+                dayli_file.seek(0,2)
+                dayli_file.write(''.join(note_body))
+        self._edit_or_create_linked_note(self.note_date, note_name)
+
     def _edit_or_create_linked_note(self, main_note_header, note_name):
         if f'{main_note_header}.md' not in os.listdir(self.notes_path):
             NoteCreater(
@@ -67,6 +87,11 @@ class VoiceBufferParser:
                 if f'\n\n[[{note_name}]]' not in note_content:
                     dayli_file.seek(0,2)
                     dayli_file.write(f'\n\n[[{note_name}]]')
+
+    def __get_dates_of_current_week(self):
+        now = datetime.now()
+        monday = now - timedelta(days=now.weekday())
+        return [(monday + timedelta(days=day)).strftime('%Y-%m-%d') for day in range(7)]
 
 
 if __name__ == '__main__':

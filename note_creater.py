@@ -35,7 +35,13 @@ class NoteCreater:
                 phrases.append(phrase.capitalize())
         body = '. '.join(phrases).replace('\n\n. ', '\n\n')
         note_string = ''
-        note_string += f'{body}.\n\n' if body else '\n'
+        if body:
+            if os.getenv('report_header') in self.note_name:
+                note_string += f'{body.replace(".","")}'
+            else:
+                note_string += f'{body}.\n\n'
+        else:
+            note_string += '\n'
         if tags:
             tags = ' '.join((f'[[{tag}]]' for tag in tags))
             note_string += tags
